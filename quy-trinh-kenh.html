@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quy trình kênh Dad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,500;7..72,700&family=Be+Vietnam+Pro:wght@400;500;600&display=swap">
+<style>
+/* Layout: one reading column. Two-folder map up top, then three phases; each phase is a numbered run of steps with who-does-it and approval marks. */
+:root {
+  --paper: #F3F4F6;
+  --sheet: #FBFBFC;
+  --ink: #1B2233;
+  --muted: #5B6377;
+  --line: #D7DAE2;
+  --navy: #26375F;
+  --brass: #8E6C22;
+  --bead: #8A2B33;
+  --bead-soft: #F3E4E5;
+  --font-display: "Literata", "Iowan Old Style", Georgia, serif;
+  --font-body: "Be Vietnam Pro", "Segoe UI", system-ui, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #10141E; --sheet: #161B27; --ink: #E4E7EE; --muted: #9AA2B5; --line: #2A3142;
+    --navy: #A9BCEB; --brass: #D9B35E; --bead: #E4848C; --bead-soft: #3A2026;
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+}
+.wrap {
+  max-width: 860px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.2; text-wrap: balance; margin: 0; }
+p, ul, ol { margin: 0; }
+code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.85em;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0 4px;
+  overflow-wrap: anywhere;
+}
+
+header.wrap { padding-block: 44px 24px; display: grid; gap: 8px; }
+h1 { font-size: clamp(2rem, 6vw, 2.8rem); font-weight: 700; color: var(--navy); }
+.lede { color: var(--muted); max-width: 60ch; }
+
+/* Two-folder map */
+.map { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 12px; align-items: stretch; padding-block: 8px 36px; }
+.folder { background: var(--sheet); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; display: grid; gap: 6px; align-content: start; }
+.folder h3 { font-size: 1.1rem; }
+.folder p { color: var(--muted); font-size: 0.93rem; }
+.flow { display: grid; align-content: center; gap: 10px; color: var(--brass); font-size: 0.85rem; font-weight: 500; text-align: center; }
+.flow span { display: block; white-space: nowrap; }
+
+/* Legend */
+.legend { display: flex; flex-wrap: wrap; gap: 8px 20px; padding-bottom: 8px; color: var(--muted); font-size: 0.88rem; }
+
+/* Phases */
+.phase { border-top: 1px solid var(--line); background: var(--sheet); }
+.phase .wrap { padding-block: 32px 36px; display: grid; gap: 20px; }
+.phase-head { display: grid; gap: 4px; }
+.phase-head h2 { font-size: clamp(1.45rem, 4vw, 1.8rem); font-weight: 700; }
+.phase-head p { color: var(--muted); }
+.phase-head .where { color: var(--brass); font-weight: 500; font-size: 0.92rem; }
+
+ol.steps { list-style: none; padding: 0; display: grid; gap: 18px; }
+.step { display: grid; grid-template-columns: 2.4rem minmax(0, 1fr); gap: 4px 12px; }
+.step .n {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.35rem;
+  color: var(--navy);
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+}
+.step .body { display: grid; gap: 4px; min-width: 0; }
+.step .top { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+.step h3 { font-family: var(--font-body); font-size: 1.02rem; font-weight: 600; }
+.step p { color: var(--ink); font-size: 0.95rem; }
+.step .out { color: var(--muted); font-size: 0.88rem; }
+
+.who { font-size: 0.8rem; font-weight: 500; color: var(--muted); }
+.ok {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--bead);
+  background: var(--bead-soft);
+  border-radius: 999px;
+  padding: 1px 9px;
+}
+
+/* Rules */
+.rules .wrap { padding-block: 32px 56px; display: grid; gap: 14px; }
+.rules h2 { font-size: 1.45rem; }
+.rules ul { padding-left: 1.1em; display: grid; gap: 6px; max-width: 64ch; }
+
+@media (max-width: 640px) {
+  .map { grid-template-columns: minmax(0, 1fr); }
+  .flow { grid-auto-flow: column; justify-content: center; gap: 16px; }
+  .flow span { white-space: normal; }
+}
+</style>
+</head>
+<body>
+
+<header class="wrap">
+  <h1>Quy trình làm video kênh Dad</h1>
+  <p class="lede">Từ ý tưởng đến lúc đăng, theo đúng cách đã làm video đầu tiên "Làm chủ đồng tiền" (21/10/2026).</p>
+</header>
+
+<div class="wrap">
+  <section class="map" aria-label="Hai thư mục">
+    <div class="folder">
+      <h3>Channel_Dad</h3>
+      <p>Chuyện của kênh: nhân vật, giọng nói, kịch bản, clip gốc, video thành phẩm, lịch đăng.</p>
+      <p><code>so-tay-kenh.md</code></p>
+    </div>
+    <div class="flow" aria-hidden="true">
+      <span>clip gốc ⟶</span>
+      <span>⟵ bản cuối</span>
+    </div>
+    <div class="folder">
+      <h3>EditHyperframe</h3>
+      <p>Chuyện dựng: công cụ, b-roll, nhạc, hiệu ứng âm thanh, kiểu dựng. Dùng chung cho mọi kênh.</p>
+      <p><code>talking-head/projects/DAD01_…</code></p>
+    </div>
+  </section>
+
+  <p class="legend"><span><span class="ok">Bạn duyệt</span> Claude dừng lại chờ bạn đồng ý</span><span>Ai làm ghi ở cạnh tên bước</span></p>
+</div>
+
+<section class="phase">
+  <div class="wrap">
+    <div class="phase-head">
+      <h2>Phần 1. Làm clip nhân vật nói</h2>
+      <p class="where">Thư mục Channel_Dad, công cụ Google Flow</p>
+    </div>
+    <ol class="steps">
+      <li class="step">
+        <span class="n">1</span>
+        <div class="body">
+          <div class="top"><h3>Ý tưởng và kịch bản</h3><span class="who">Claude viết</span><span class="ok">Bạn duyệt</span></div>
+          <p>2–3 ý tưởng kèm video tham khảo đã nhiều lượt xem. Chọn một ý, viết kịch bản: câu mở đầu giữ người xem trong 3 giây, một câu chốt dễ chia sẻ. Thoại khoảng 25–28 tiếng cho mỗi clip 10 giây.</p>
+        </div>
+      </li>
+      <li class="step">
+        <span class="n">2</span>
+        <div class="body">
+          <div class="top"><h3>Ảnh khung đầu</h3><span class="who">Claude viết prompt, bạn tạo trên Flow</span><span class="ok">Bạn duyệt</span></div>
+          <p>Nano Banana, đính kèm ảnh chuẩn của nhân vật (cha giàu: <code>bo-thu-vien.webp</code>). Tạo trung cảnh rồi sửa ra cận mặt từ chính ảnh đó.</p>
+        </div>
+      </li>
+      <li class="step">
+        <span class="n">3</span>
+        <div class="body">
+          <div class="top"><h3>Clip nói</h3><span class="who">Claude viết prompt, bạn tạo trên Flow</span><span class="ok">Bạn duyệt</span></div>
+          <p>Omni 1.1 Flash, clip 10 giây. Dán nguyên khối giọng nói, khối ánh sáng và rào chắn trong sổ tay. Tạo 2 bản, chọn bản giống giọng chuẩn nhất.</p>
+        </div>
+      </li>
+      <li class="step">
+        <span class="n">4</span>
+        <div class="body">
+          <div class="top"><h3>Lưu clip gốc</h3><span class="who">Claude</span></div>
+          <p>Chuyển từ Downloads về kênh, không để lại trong Downloads.</p>
+          <p class="out">Kết quả: <code>assets/videos/goc/YYYY-MM-DD_chu-de_goc.mp4</code></p>
+        </div>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="phase">
+  <div class="wrap">
+    <div class="phase-head">
+      <h2>Phần 2. Dựng video</h2>
+      <p class="where">Thư mục EditHyperframe/talking-head, kiểu dựng bw-film-quote</p>
+    </div>
+    <ol class="steps" start="5">
+      <li class="step">
+        <span class="n">5</span>
+        <div class="body">
+          <div class="top"><h3>Tạo dự án dựng</h3><span class="who">Claude</span></div>
+          <p>Đặt tên <code>DAD02_ChuDe</code>, <code>DAD03_…</code>. Dự án chỉ trỏ tới clip gốc ở kênh, không chép.</p>
+        </div>
+      </li>
+      <li class="step">
+        <span class="n">6</span>
+        <div class="body">
+          <div class="top"><h3>Phân tích clip</h3><span class="who">Claude</span></div>
+          <p>Chép lời từng chữ kèm thời gian, tìm chỗ đổi góc máy và các khoảng lặng.</p>
+        </div>
+      </li>
+      <li class="step">
+        <span class="n">7</span>
+        <div class="body">
+          <div class="top"><h3>B-roll minh họa</h3><span class="who">Claude tìm trên Pexels</span><span class="ok">Bạn duyệt</span></div>
+          <p>Mỗi ý trừu tượng một cảnh (đếm tiền, mất ngủ, xe sang…), khoảng 40–50% thời lượng. Mỗi cảnh một clip chính và một dự phòng. Bạn duyệt danh sách rồi mới tải.</p>
+          <p class="out">Lưu vào thư viện chung <code>library/broll/</code> để video sau dùng lại.</p>
+        </div>
+      </li>
+      <li class="step">
+        <span class="n">8</span>
+        <div class="body">
+          <div class="top"><h3>Nhạc nền</h3><span class="who">Claude chọn 2–3 bản</span><span class="ok">Bạn nghe và chọn</span></div>
+          <p>Nhạc nhẹ, đặt thấp dưới giọng nói.</p>
+        </div>
+      </li>
+      <li class="step">
+        <span class="n">9</span>
+        <div class="body">
+          <div class="top"><h3>Bảng phân cảnh</h3><span class="who">Claude</span><span class="ok">Bạn duyệt</span></div>
+          <p>Ảnh tĩnh các khoảnh khắc chính: mặt nhân vật trong vùng an toàn, phụ đề vàng một dòng, chữ lớn nổi bật ở từ khóa.</p>
+        </div>
+      </li>
+      <li class="step">
+        <span class="n">10</span>
+        <div class="body">
+          <div class="top"><h3>Tông màu</h3><span class="who">Claude làm 3 tông</span><span class="ok">Bạn chọn</span></div>
+          <p>Video đầu tiên chọn tông "rực rỡ tươi sáng". Mặt nhân vật luôn phải sáng rõ.</p>
+        </div>
+      </li>
+      <li class="step">
+        <span class="n">11</span>
+        <div class="body">
+          <div class="top"><h3>Bản nháp</h3><span class="who">Claude</span><span class="ok">Bạn góp ý</span></div>
+          <p>Render nhanh 30 khung hình/giây để xem cả video, sửa đến khi bạn ưng.</p>
+        </div>
+      </li>
+      <li class="step">
+        <span class="n">12</span>
+        <div class="body">
+          <div class="top"><h3>Bản cuối</h3><span class="who">Claude</span></div>
+          <p>Render 60 khung hình/giây, chuẩn hóa âm lượng, tự kiểm tra dấu tiếng Việt và phụ đề khớp lời.</p>
+        </div>
+      </li>
+      <li class="step">
+        <span class="n">13</span>
+        <div class="body">
+          <div class="top"><h3>Chép về kênh</h3><span class="who">Claude</span></div>
+          <p>Chép bản cuối về Channel_Dad và ghi một dòng vào bảng video ở mục 9 của sổ tay.</p>
+          <p class="out">Kết quả: <code>assets/videos/YYYY-MM-DD_chu-de_khuon1.mp4</code></p>
+        </div>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="phase">
+  <div class="wrap">
+    <div class="phase-head">
+      <h2>Phần 3. Đăng và rút kinh nghiệm</h2>
+      <p class="where">Meta Business Suite, Google Drive</p>
+    </div>
+    <ol class="steps" start="14">
+      <li class="step">
+        <span class="n">14</span>
+        <div class="body">
+          <div class="top"><h3>Bảng đăng</h3><span class="who">Claude soạn, bạn hẹn giờ</span></div>
+          <p>Caption, ảnh bìa đẹp, bật nhãn AI. Kênh Dad không dùng end card.</p>
+        </div>
+      </li>
+      <li class="step">
+        <span class="n">15</span>
+        <div class="body">
+          <div class="top"><h3>Đẩy lên Drive</h3><span class="who">Claude</span></div>
+          <p>Bạn báo "đăng xong", Claude đẩy video lên Drive và cập nhật Sheet theo dõi.</p>
+        </div>
+      </li>
+      <li class="step">
+        <span class="n">16</span>
+        <div class="body">
+          <div class="top"><h3>Xem số liệu, ghi bài học</h3><span class="who">Bạn và Claude</span></div>
+          <p>Sau 2–3 ngày xem lượt xem, thời gian xem, chia sẻ. Lỗi về nhân vật hay giọng ghi vào sổ tay kênh, lỗi về dựng ghi vào kiểu dựng.</p>
+        </div>
+      </li>
+      <li class="step">
+        <span class="n">17</span>
+        <div class="body">
+          <div class="top"><h3>Đóng gói thành skill</h3><span class="who">Claude</span><span class="ok">Bạn đồng ý</span></div>
+          <p>Sau 2–3 video cùng dạng, gói phần dựng thành skill để các video sau làm nhanh hơn.</p>
+        </div>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="rules">
+  <div class="wrap">
+    <h2>Giữ cố định</h2>
+    <ul>
+      <li>Chưa duyệt kịch bản thì chưa viết prompt.</li>
+      <li>Mỗi nhân vật một ảnh chuẩn và một khối giọng riêng. Không đính kèm ảnh nhân vật này khi tạo nhân vật khác.</li>
+      <li>Mỗi quyết định ghi ở một nơi: chuyện kênh ở Channel_Dad, chuyện dựng ở EditHyperframe.</li>
+      <li>Không để file gốc trong Downloads.</li>
+      <li>Video thành phẩm luôn quay về Channel_Dad.</li>
+    </ul>
+  </div>
+</section>
+
+</body>
+</html>

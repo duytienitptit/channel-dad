@@ -1,0 +1,9 @@
+.DS_Store
+
+# Video không đưa lên GitHub (để trên Drive)
+assets/videos/
+*.mp4
+*.mov
+*.mp3
+*.wav
+*.m4a
