@@ -1,6 +1,6 @@
 # Bắt đầu với kênh Dad trên máy mới
 
-Dự án gồm hai kho GitHub riêng tư, đặt cạnh nhau trong `~/01_Projects/`:
+Dự án gồm hai kho GitHub công khai, đặt cạnh nhau trong `~/01_Projects/`:
 
 | Kho | Thư mục trên máy | Nội dung |
 |---|---|---|
@@ -10,18 +10,18 @@ Dự án gồm hai kho GitHub riêng tư, đặt cạnh nhau trong `~/01_Project
 Giữ **đúng tên thư mục** như bảng trên, vì hướng dẫn và các liên kết dựa vào đó.
 
 ## Người mới làm 3 bước
-1. Cài [Claude Code](https://claude.com/claude-code) và đăng nhập GitHub (đã được mời vào hai kho).
+1. Cài [Claude Code](https://claude.com/claude-code). Không cần tài khoản GitHub để tải về.
 2. Mở Terminal, chạy:
    ```bash
    mkdir -p ~/01_Projects && cd ~/01_Projects
-   gh repo clone duytienitptit/channel-dad Channel_Dad
+   git clone https://github.com/duytienitptit/channel-dad.git Channel_Dad
    ```
 3. Mở Claude Code trong thư mục `Channel_Dad` và nói: **"Cài đặt theo CAI-DAT.md"**.
 
 ## Phần Claude làm
 1. Tải kho dựng về cạnh kho này:
    ```bash
-   cd ~/01_Projects && gh repo clone duytienitptit/edit-hyperframe EditHyperframe
+   cd ~/01_Projects && git clone https://github.com/duytienitptit/edit-hyperframe.git EditHyperframe
    ```
 2. Làm theo `~/01_Projects/EditHyperframe/CAI-DAT.md` (phần mềm nền, HyperFrames, công cụ Python, font).
 3. Người chỉ làm clip trên Google Flow, không dựng: dừng sau bước 1, không cần cài phần dựng.
